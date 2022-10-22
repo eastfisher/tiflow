@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/url"
 	"os"
-	"path"
 
 	"github.com/pingcap/tiflow/cdc/contextutil"
 	"github.com/pingcap/tiflow/cdc/model"
@@ -23,9 +22,7 @@ func NewWasmPluginSink(ctx context.Context, sinkURI *url.URL,
 ) (*wasmPluginSink, error) {
 	changefeedID := contextutil.ChangefeedIDFromCtx(ctx)
 
-	wasmFile := opts["wasmfile"]
-	cfg := config.GetGlobalServerConfig()
-	wasmPath := path.Join(cfg.WasmPluginDir, wasmFile)
+	wasmPath := opts["wasmpath"]
 	wasmBytes, err := os.ReadFile(wasmPath)
 	if err != nil {
 		return nil, err
