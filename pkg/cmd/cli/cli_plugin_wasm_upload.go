@@ -3,6 +3,7 @@ package cli
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -64,9 +65,11 @@ func (u *uploadWasmPluginOptions) run(f factory.Factory) error {
 func sendCaptureUploadWasmPluginQuery(ctx context.Context, capture *capture, name string, binary []byte) (string, error) {
 	// TODO: https not supported
 	url := fmt.Sprintf("http://%s/api/v1/plugins/wasm/upload", capture.AdvertiseAddr)
+
+	data := base64.URLEncoding.EncodeToString(binary)
 	cfg := &model.WasmPluginConfig{
 		Name:   name,
-		Binary: string(binary),
+		Binary: data,
 	}
 	body, _ := json.Marshal(cfg)
 	buf := bytes.NewReader(body)

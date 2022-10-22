@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/base64"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -21,7 +22,13 @@ func (h *openAPI) UploadWasmPlugin(c *gin.Context) {
 		return
 	}
 
-	if err := saveWasmPlugin(cfg.Name, cfg.Binary); err != nil {
+	ret, err := base64.URLEncoding.DecodeString(cfg.Binary)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	if err := saveWasmPlugin(cfg.Name, ret); err != nil {
 		_ = c.Error(err)
 		return
 	}
@@ -39,13 +46,13 @@ func (h *openAPI) ListWasmPlugins(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, cfgs)
 }
 
-func saveWasmPlugin(name string, binary string) error {
+func saveWasmPlugin(name string, binary []byte) error {
 	fileName := getWasmPluginPath(name)
 	f, err := os.Create(fileName)
 	if err != nil {
 		return err
 	}
-	_, err = f.WriteString(binary)
+	_, err = f.Write(binary)
 	return err
 }
 
