@@ -42,14 +42,15 @@ func (u *uploadWasmPluginOptions) run(f factory.Factory) error {
 	}
 	etcdClient, err := f.EtcdClient()
 	if err != nil {
-		return err
+		return errors.WithMessage(err, "get etcd client error")
 	}
 
 	ctx := cmdcontext.GetDefaultContext()
 	captures, err := listCaptures(ctx, etcdClient)
 	if err != nil {
-		return err
+		return errors.WithMessage(err, "list captures error")
 	}
+	fmt.Printf("list captures: %v\n", captures)
 
 	for _, capture := range captures {
 		_, err := sendCaptureUploadWasmPluginQuery(ctx, capture, u.name, binary)
