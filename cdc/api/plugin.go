@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/tiflow/cdc/model"
+	"github.com/pingcap/tiflow/pkg/config"
 )
 
 const DefaultPluginPath = "/home/ubuntu/cdc_wasm_plugins"
@@ -49,7 +50,8 @@ func saveWasmPlugin(name string, binary string) error {
 }
 
 func listWasmPlugins(withBinary bool) ([]*model.WasmPluginConfig, error) {
-	infos, err := ioutil.ReadDir(DefaultPluginPath)
+	cfg := config.GetGlobalServerConfig()
+	infos, err := ioutil.ReadDir(cfg.WasmPluginDir)
 	if err != nil {
 		return nil, err
 	}
@@ -71,5 +73,6 @@ func listWasmPlugins(withBinary bool) ([]*model.WasmPluginConfig, error) {
 }
 
 func getWasmPluginPath(name string) string {
-	return path.Join(DefaultPluginPath, name)
+	cfg := config.GetGlobalServerConfig()
+	return path.Join(cfg.WasmPluginDir, name)
 }

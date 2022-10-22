@@ -329,6 +329,12 @@ func (s *Server) initDir(ctx context.Context) error {
 	if err != nil {
 		return errors.Trace(err)
 	}
+
+	// Ensure wasm plugin dir exists and read-writable.
+	_, err = checkDir(conf.WasmPluginDir)
+	if err != nil {
+		return errors.Trace(err)
+	}
 	return nil
 }
 
