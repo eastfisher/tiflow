@@ -11,8 +11,8 @@ import (
 func TestLuaPluginSink(t *testing.T) {
 	ctx := context.Background()
 	opts := map[string]string{
-		"luaAddTable":    "addTable.lua",
-		"luaRemoveTable": "removeTable.lua",
+		"luaAddTable":    "scripts/addTable.lua",
+		"luaRemoveTable": "scripts/removeTable.lua",
 	}
 	sink, err := NewLuaSink(ctx, nil, nil, opts, nil)
 	require.NoError(t, err)
@@ -26,10 +26,10 @@ func TestLuaPluginSink(t *testing.T) {
 func TestLuaRowEvent(t *testing.T) {
 	ctx := context.Background()
 	opts := map[string]string{
-		"luaAddTable":    "addTable.lua",
-		"luaRemoveTable": "removeTable.lua",
-		"luaRowChanged":  "rowChanged.lua",
-		"luaDDL":         "ddl.lua",
+		"luaAddTable":    "scripts/addTable.lua",
+		"luaRemoveTable": "scripts/removeTable.lua",
+		"luaRowChanged":  "scripts/rowChanged.lua",
+		"luaDDL":         "scripts/ddl.lua",
 	}
 	sink, err := NewLuaSink(ctx, nil, nil, opts, nil)
 	require.NoError(t, err)
