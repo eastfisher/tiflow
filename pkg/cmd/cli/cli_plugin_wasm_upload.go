@@ -76,7 +76,7 @@ func sendCaptureUploadWasmPluginQuery(ctx context.Context, capture *capture, nam
 	}
 	if resp.StatusCode != http.StatusOK {
 		body, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Sprintf("status: %d, body: %s", resp.StatusCode, body), nil
+		return "", fmt.Errorf("status: %d, body: %s", resp.StatusCode, body)
 	}
 	return "OK", nil
 }

@@ -58,7 +58,7 @@ func sendCaptureListWasmPluginQuery(ctx context.Context, capture *capture, withB
 	}
 	body, _ := ioutil.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Sprintf("status: %d, body: %s", resp.StatusCode, body), nil
+		return "", fmt.Errorf("status: %d, body: %s", resp.StatusCode, body)
 	} else {
 		return string(body), nil
 	}
