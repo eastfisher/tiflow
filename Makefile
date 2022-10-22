@@ -75,6 +75,7 @@ LDFLAGS += -X "$(CDC_PKG)/pkg/version.BuildTS=$(BUILDTS)"
 LDFLAGS += -X "$(CDC_PKG)/pkg/version.GitHash=$(GITHASH)"
 LDFLAGS += -X "$(CDC_PKG)/pkg/version.GitBranch=$(GITBRANCH)"
 LDFLAGS += -X "$(CDC_PKG)/pkg/version.GoVersion=$(GOVERSION)"
+LDFLAGS += '-extldflags="-Wl,--allow-multiple-definition"'
 
 # DM LDFLAGS.
 LDFLAGS += -X "$(DM_PKG)/pkg/utils.ReleaseVersion=$(RELEASE_VERSION)"
@@ -105,7 +106,7 @@ build-failpoint: check_failpoint_ctl
 	$(FAILPOINT_DISABLE)
 
 cdc:
-	$(GOBUILD) -ldflags '$(LDFLAGS)' --ldflags '-extldflags="-Wl,--allow-multiple-definition"' -o bin/cdc ./cmd/cdc/main.go
+	$(GOBUILD) -ldflags '$(LDFLAGS)' -o bin/cdc ./cmd/cdc/main.go
 
 kafka_consumer:
 	$(GOBUILD) -ldflags '$(LDFLAGS)' -o bin/cdc_kafka_consumer ./cmd/kafka-consumer/main.go
