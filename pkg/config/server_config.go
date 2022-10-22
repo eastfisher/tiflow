@@ -129,6 +129,7 @@ var defaultServerConfig = &ServerConfig{
 		},
 		Messages: defaultMessageConfig.Clone(),
 	},
+	WasmPluginDir: "./wasm_plugin_dir",
 }
 
 // ServerConfig represents a config for server
@@ -155,6 +156,9 @@ type ServerConfig struct {
 	PerTableMemoryQuota uint64          `toml:"per-table-memory-quota" json:"per-table-memory-quota"`
 	KVClient            *KVClientConfig `toml:"kv-client" json:"kv-client"`
 	Debug               *DebugConfig    `toml:"debug" json:"debug"`
+
+	// Wasm plugin dir
+	WasmPluginDir string `toml:"wasm-plugin-dir" json:"wasm-plugin-dir"`
 }
 
 // Marshal returns the json marshal format of a ServerConfig
