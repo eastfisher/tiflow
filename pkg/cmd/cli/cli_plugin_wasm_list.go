@@ -41,7 +41,7 @@ func (u *listWasmPluginOptions) run(cmd *cobra.Command, f factory.Factory) error
 	for _, capture := range captures {
 		resp, err := sendCaptureListWasmPluginQuery(ctx, capture, u.withBinary)
 		if err != nil {
-			return errors.WithMessage(err, fmt.Sprintf("upload failed, capture: %v", capture))
+			return errors.WithMessage(err, fmt.Sprintf("list failed, capture: %v", capture))
 		}
 		resps[capture.AdvertiseAddr] = resp
 	}
