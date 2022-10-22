@@ -1,0 +1,2 @@
+here's a ddl and data:
+{"StartTs":1,"CommitTs":1,"TableInfo":null,"PreTableInfo":null,"Query":"select * from 1","Type":0,"Done":false}

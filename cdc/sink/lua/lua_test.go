@@ -8,21 +8,28 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestInitWasmSink(t *testing.T) {
+func TestLuaPluginSink(t *testing.T) {
 	ctx := context.Background()
 	opts := map[string]string{
-		"udfpath": "usrlibs.so",
+		"luaAddTable":    "addTable.lua",
+		"luaRemoveTable": "removeTable.lua",
 	}
 	sink, err := NewLuaSink(ctx, nil, nil, opts, nil)
 	require.NoError(t, err)
 	err = sink.AddTable(100)
 	require.NoError(t, err)
+
+	err = sink.RemoveTable(100)
+	require.NoError(t, err)
 }
 
-func TestWasmRowEvent(t *testing.T) {
+func TestLuaRowEvent(t *testing.T) {
 	ctx := context.Background()
 	opts := map[string]string{
-		"udfpath": "usrlibs.so",
+		"luaAddTable":    "addTable.lua",
+		"luaRemoveTable": "removeTable.lua",
+		"luaRowChanged":  "rowChanged.lua",
+		"luaDDL":         "ddl.lua",
 	}
 	sink, err := NewLuaSink(ctx, nil, nil, opts, nil)
 	require.NoError(t, err)
@@ -31,6 +38,16 @@ func TestWasmRowEvent(t *testing.T) {
 
 	events := getTestRowEvents()
 	err = sink.EmitRowChangedEvents(ctx, events...)
+	require.NoError(t, err)
+
+	ddl := &model.DDLEvent{
+		StartTs:  1,
+		CommitTs: 1,
+		Query:    "select * from 1",
+		Type:     0,
+		Done:     false,
+	}
+	err = sink.EmitDDLEvent(ctx, ddl)
 	require.NoError(t, err)
 }
 
