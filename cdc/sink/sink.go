@@ -15,6 +15,8 @@ package sink
 
 import (
 	"context"
+	"github.com/pingcap/tiflow/cdc/sink/http"
+	"github.com/pingcap/tiflow/cdc/sink/rpc"
 	"net/url"
 	"strings"
 
@@ -154,6 +156,24 @@ func init() {
 		errCh chan error,
 	) (Sink, error) {
 		return wasm.NewWasmPluginSink(ctx, sinkURI, config, opts, errCh)
+	}
+
+	// register http plugin sink
+	sinkIniterMap["http"] = func(
+		ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,
+		filter *filter.Filter, config *config.ReplicaConfig, opts map[string]string,
+		errCh chan error,
+	) (Sink, error) {
+		return http.NewHTTPPluginSink(ctx, sinkURI, config, opts, errCh)
+	}
+
+	// register rpc plugin sink
+	sinkIniterMap["rpc"] = func(
+		ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,
+		filter *filter.Filter, config *config.ReplicaConfig, opts map[string]string,
+		errCh chan error,
+	) (Sink, error) {
+		return rpc.NewRPCPluginSink(ctx, sinkURI, config, opts, errCh)
 	}
 
 	failpoint.Inject("SimpleMySQLSinkTester", func() {
