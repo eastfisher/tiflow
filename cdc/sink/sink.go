@@ -15,14 +15,16 @@ package sink
 
 import (
 	"context"
-	"github.com/pingcap/tiflow/cdc/sink/http"
-	"github.com/pingcap/tiflow/cdc/sink/rpc"
 	"net/url"
 	"strings"
+
+	"github.com/pingcap/tiflow/cdc/sink/http"
+	"github.com/pingcap/tiflow/cdc/sink/rpc"
 
 	"github.com/pingcap/failpoint"
 	"github.com/pingcap/tiflow/cdc/contextutil"
 	"github.com/pingcap/tiflow/cdc/model"
+	"github.com/pingcap/tiflow/cdc/sink/lua"
 	"github.com/pingcap/tiflow/cdc/sink/mq"
 	"github.com/pingcap/tiflow/cdc/sink/mysql"
 	"github.com/pingcap/tiflow/cdc/sink/udflib"
@@ -176,6 +178,14 @@ func init() {
 		return rpc.NewRPCPluginSink(ctx, sinkURI, config, opts, errCh)
 	}
 
+	// register lua plugin sink
+	sinkIniterMap["lua"] = func(
+		ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,
+		filter *filter.Filter, config *config.ReplicaConfig, opts map[string]string,
+		errCh chan error,
+	) (Sink, error) {
+		return lua.NewLuaSink(ctx, sinkURI, config, opts, errCh)
+	}
 	failpoint.Inject("SimpleMySQLSinkTester", func() {
 		sinkIniterMap["simple-mysql"] = func(
 			ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,
