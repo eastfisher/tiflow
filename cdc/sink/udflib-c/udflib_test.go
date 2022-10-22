@@ -1,4 +1,4 @@
-package udflib
+package lua
 
 import (
 	"context"

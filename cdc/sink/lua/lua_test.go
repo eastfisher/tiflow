@@ -1,4 +1,4 @@
-package udflib
+package lua
 
 import (
 	"context"
@@ -13,7 +13,7 @@ func TestInitWasmSink(t *testing.T) {
 	opts := map[string]string{
 		"udfpath": "usrlibs.so",
 	}
-	sink, err := NewUdflibSink(ctx, nil, nil, opts, nil)
+	sink, err := NewLuaSink(ctx, nil, nil, opts, nil)
 	require.NoError(t, err)
 	err = sink.AddTable(100)
 	require.NoError(t, err)
@@ -24,7 +24,7 @@ func TestWasmRowEvent(t *testing.T) {
 	opts := map[string]string{
 		"udfpath": "usrlibs.so",
 	}
-	sink, err := NewUdflibSink(ctx, nil, nil, opts, nil)
+	sink, err := NewLuaSink(ctx, nil, nil, opts, nil)
 	require.NoError(t, err)
 	err = sink.AddTable(100)
 	require.NoError(t, err)
