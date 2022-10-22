@@ -3,13 +3,14 @@ package lua
 import (
 	"context"
 	"encoding/json"
-	"github.com/labstack/gommon/log"
 	"net/url"
 
+	"github.com/pingcap/log"
 	"github.com/pingcap/tiflow/cdc/contextutil"
 	"github.com/pingcap/tiflow/cdc/model"
 	"github.com/pingcap/tiflow/pkg/config"
 	lua "github.com/yuin/gopher-lua"
+	"go.uber.org/zap"
 )
 
 type luaSink struct {
@@ -41,12 +42,12 @@ func (l *luaSink) AddTable(tableID model.TableID) error {
 
 	err := L.DoFile(l.addTableFn)
 	if err != nil {
-		log.Printf("DoFile failed, err:%v", err)
+		log.Error("DoFile failed", zap.Error(err))
 		return err
 	}
 	err = l.doExecLuaCall(L, "addTable", tableID)
 	if err != nil {
-		log.Printf("doExecLuaCall failed, err:%v", err)
+		log.Error("doExecLuaCall failed", zap.Error(err))
 		return err
 	}
 	return nil
@@ -58,17 +59,17 @@ func (l *luaSink) EmitRowChangedEvents(ctx context.Context, rows ...*model.RowCh
 
 	err := L.DoFile(l.rowChangedFn) // FIXME: rows is not passed to function!
 	if err != nil {
-		log.Printf("DoFile failed, err:%v", err)
+		log.Error("DoFile failed, err", zap.Error(err))
 		return err
 	}
 	data, err := json.Marshal(rows)
 	if err != nil {
-		log.Printf("marshal failed, err:%v", err)
+		log.Error("marshal failed", zap.Error(err))
 		return err
 	}
 	err = l.doExecLuaCall2(L, "rowChanged", string(data))
 	if err != nil {
-		log.Printf("doExecLuaCall2 failed, err:%v", err)
+		log.Error("doExecLuaCall2 failed", zap.Error(err))
 		return err
 	}
 	return err
@@ -80,17 +81,17 @@ func (l *luaSink) EmitDDLEvent(ctx context.Context, ddl *model.DDLEvent) error {
 
 	err := L.DoFile(l.ddlFn)
 	if err != nil {
-		log.Printf("DoFile failed, err:%v", err)
+		log.Error("DoFile failed", zap.Error(err))
 		return err
 	}
 	data, err := json.Marshal(ddl)
 	if err != nil {
-		log.Printf("marshal failed, err:%v", err)
+		log.Error("marshal failed", zap.Error(err))
 		return err
 	}
 	err = l.doExecLuaCall2(L, "ddl", string(data))
 	if err != nil {
-		log.Printf("doExecLuaCall2 failed, err:%v", err)
+		log.Error("doExecLuaCall2 failed", zap.Error(err))
 		return err
 	}
 	return err
@@ -112,12 +113,12 @@ func (l *luaSink) RemoveTable(tableID model.TableID) error {
 
 	err := L.DoFile(l.removeTableFn)
 	if err != nil {
-		log.Printf("DoFile failed, err:%v", err)
+		log.Error("DoFile failed", zap.Error(err))
 		return err
 	}
 	err = l.doExecLuaCall(L, "removeTable", tableID)
 	if err != nil {
-		log.Printf("doExecLuaCall failed, err:%v", err)
+		log.Error("doExecLuaCall failed", zap.Error(err))
 		return err
 	}
 	return err
@@ -133,11 +134,11 @@ func (l *luaSink) doExecLuaCall(L *lua.LState, op string, data any) error {
 		NRet:    1,
 		Protect: true,
 	}, lua.LNumber(data.(int64))); err != nil {
-		log.Printf("callByParam failed, err: %v", err)
+		log.Error("callByParam failed", zap.Error(err))
 		return err
 	}
 	ret, _ := L.Get(-1).(lua.LString)
-	log.Printf("ret: %v", ret)
+	log.Info("doExecLuaCall success", zap.Any("ret", ret))
 	return nil
 }
 
@@ -147,10 +148,10 @@ func (l *luaSink) doExecLuaCall2(L *lua.LState, op string, data string) error {
 		NRet:    1,
 		Protect: true,
 	}, lua.LString(data)); err != nil {
-		log.Printf("callByParam failed, err: %v", err)
+		log.Error("callByParam failed", zap.Error(err))
 		return err
 	}
 	ret, _ := L.Get(-1).(lua.LString)
-	log.Printf("ret: %v", ret)
+	log.Info("doExecLuaCall2 success", zap.Any("ret", ret))
 	return nil
 }
