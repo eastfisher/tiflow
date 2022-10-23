@@ -19,7 +19,6 @@ import (
 	"strings"
 
 	"github.com/pingcap/failpoint"
-	"github.com/pingcap/log"
 	"github.com/pingcap/tiflow/cdc/contextutil"
 	"github.com/pingcap/tiflow/cdc/model"
 	"github.com/pingcap/tiflow/cdc/sink/http"
@@ -161,7 +160,7 @@ func init() {
 	}
 
 	// register http plugin sink
-	sinkIniterMap["http-plugin"] = func(
+	sinkIniterMap["httpplugin"] = func(
 		ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,
 		filter *filter.Filter, config *config.ReplicaConfig, opts map[string]string,
 		errCh chan error,
@@ -170,7 +169,7 @@ func init() {
 	}
 
 	// register rpc plugin sink
-	sinkIniterMap["rpc-plugin"] = func(
+	sinkIniterMap["rpcplugin"] = func(
 		ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,
 		filter *filter.Filter, config *config.ReplicaConfig, opts map[string]string,
 		errCh chan error,
@@ -179,7 +178,7 @@ func init() {
 	}
 
 	// register lua plugin sink
-	sinkIniterMap["lua-plugin"] = func(
+	sinkIniterMap["luaplugin"] = func(
 		ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,
 		filter *filter.Filter, config *config.ReplicaConfig, opts map[string]string,
 		errCh chan error,
@@ -212,7 +211,6 @@ func New(
 	if err := config.ValidateAndAdjust(sinkURI); err != nil {
 		return nil, err
 	}
-	log.Info("sink uri:" + sinkURI.Scheme)
 	if newSink, ok := sinkIniterMap[strings.ToLower(sinkURI.Scheme)]; ok {
 		return newSink(ctx, changefeedID, sinkURI, filter, config, opts, errCh)
 	}
