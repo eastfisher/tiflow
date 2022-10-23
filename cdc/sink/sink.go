@@ -18,15 +18,15 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/pingcap/tiflow/cdc/sink/http"
-	"github.com/pingcap/tiflow/cdc/sink/rpc"
-
 	"github.com/pingcap/failpoint"
+	"github.com/pingcap/log"
 	"github.com/pingcap/tiflow/cdc/contextutil"
 	"github.com/pingcap/tiflow/cdc/model"
+	"github.com/pingcap/tiflow/cdc/sink/http"
 	"github.com/pingcap/tiflow/cdc/sink/lua"
 	"github.com/pingcap/tiflow/cdc/sink/mq"
 	"github.com/pingcap/tiflow/cdc/sink/mysql"
+	"github.com/pingcap/tiflow/cdc/sink/rpc"
 	"github.com/pingcap/tiflow/cdc/sink/udflib"
 	"github.com/pingcap/tiflow/cdc/sink/wasm"
 	"github.com/pingcap/tiflow/pkg/config"
@@ -212,6 +212,7 @@ func New(
 	if err := config.ValidateAndAdjust(sinkURI); err != nil {
 		return nil, err
 	}
+	log.Info("sink uri:" + sinkURI.Scheme)
 	if newSink, ok := sinkIniterMap[strings.ToLower(sinkURI.Scheme)]; ok {
 		return newSink(ctx, changefeedID, sinkURI, filter, config, opts, errCh)
 	}
