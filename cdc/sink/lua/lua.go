@@ -3,8 +3,10 @@ package lua
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 	"net/url"
 
+	"github.com/cjoudrey/gluahttp"
 	"github.com/pingcap/log"
 	"github.com/pingcap/tiflow/cdc/contextutil"
 	"github.com/pingcap/tiflow/cdc/model"
@@ -39,6 +41,7 @@ func NewLuaSink(ctx context.Context, sinkURI *url.URL,
 func (l *luaSink) AddTable(tableID model.TableID) error {
 	L := lua.NewState()
 	defer L.Close()
+	L.PreloadModule("http", gluahttp.NewHttpModule(&http.Client{}).Loader)
 
 	err := L.DoFile(l.addTableFn)
 	if err != nil {
