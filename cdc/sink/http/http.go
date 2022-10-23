@@ -29,7 +29,7 @@ func NewHTTPPluginSink(ctx context.Context, sinkURI *url.URL,
 	return &httpPluginSink{
 		id:         changeFeedID,
 		httpClient: http.Client{Timeout: time.Duration(1) * time.Second},
-		httpURL:    sinkURI.String(),
+		httpURL:    opts["httpurl"], // sinkURI.String(),
 	}, nil
 }
 

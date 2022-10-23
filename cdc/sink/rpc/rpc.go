@@ -2,13 +2,14 @@ package rpc
 
 import (
 	"context"
+	"net/rpc"
+	"net/rpc/jsonrpc"
+	"net/url"
+
 	"github.com/labstack/gommon/log"
 	"github.com/pingcap/tiflow/cdc/contextutil"
 	"github.com/pingcap/tiflow/cdc/model"
 	"github.com/pingcap/tiflow/pkg/config"
-	"net/rpc"
-	"net/rpc/jsonrpc"
-	"net/url"
 )
 
 type rpcPluginSink struct {
@@ -22,7 +23,8 @@ func NewRPCPluginSink(ctx context.Context, sinkURI *url.URL,
 	replicaConfig *config.ReplicaConfig, opts map[string]string, errCh chan error,
 ) (*rpcPluginSink, error) {
 	changeFeedID := contextutil.ChangefeedIDFromCtx(ctx)
-	rpcClient, err := jsonrpc.Dial("tcp", sinkURI.String())
+
+	rpcClient, err := jsonrpc.Dial("tcp", opts["httpurl"])
 	if err != nil {
 		log.Fatalf("dial sink URI failed, err:%v", err)
 		return nil, err
