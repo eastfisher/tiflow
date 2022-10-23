@@ -58,6 +58,7 @@ func (hp *httpPluginSink) callHTTPRequest(ctx context.Context, data []byte) ([]b
 	}
 
 	return body, nil
+	// return nil, nil
 }
 
 func (hp *httpPluginSink) AddTable(tableID model.TableID) error {
@@ -104,18 +105,18 @@ func (hp *httpPluginSink) doExecHTTPCall(ctx context.Context, operation string, 
 		return err
 	}
 
-	// use http client
-	respBytes, err := hp.callHTTPRequest(ctx, reqBytes)
-	if err != nil {
-		return err
-	}
+	// // use http client
+	hp.callHTTPRequest(ctx, reqBytes)
+	// if err != nil {
+	// 	return err
+	// }
 
-	var resp CommonExecResp
-	if err := json.Unmarshal(respBytes, &resp); err != nil {
-		return err
-	}
-	if resp.Code != HTTPRespCodeSuccess {
-		return resp
-	}
+	// var resp CommonExecResp
+	// if err := json.Unmarshal(respBytes, &resp); err != nil {
+	// 	return err
+	// }
+	// if resp.Code != HTTPRespCodeSuccess {
+	// 	return resp
+	// }
 	return nil
 }
