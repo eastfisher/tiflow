@@ -110,7 +110,7 @@ func (l *luaSink) EmitCheckpointTs(ctx context.Context, ts uint64, tables []mode
 	return nil
 }
 
-func (l *luaSink) RemoveTable(tableID model.TableID) error {
+func (l *luaSink) RemoveTable(ctx context.Context, tableID model.TableID) error {
 	L := lua.NewState()
 	defer L.Close()
 
