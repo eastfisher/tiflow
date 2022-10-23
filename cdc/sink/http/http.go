@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/pingcap/log"
 	"github.com/pingcap/tiflow/cdc/contextutil"
 	"github.com/pingcap/tiflow/cdc/model"
 	"github.com/pingcap/tiflow/pkg/config"
@@ -25,7 +26,7 @@ func NewHTTPPluginSink(ctx context.Context, sinkURI *url.URL,
 	replicaConfig *config.ReplicaConfig, opts map[string]string, errCh chan error,
 ) (*httpPluginSink, error) {
 	changeFeedID := contextutil.ChangefeedIDFromCtx(ctx)
-
+	log.Info("init http plugin sink")
 	return &httpPluginSink{
 		id:         changeFeedID,
 		httpClient: http.Client{Timeout: time.Duration(1) * time.Second},
@@ -37,18 +38,22 @@ func (hp *httpPluginSink) callHTTPRequest(ctx context.Context, data []byte) ([]b
 	postData := bytes.NewBuffer(data)
 	req, err := http.NewRequestWithContext(ctx, "POST", hp.httpURL, postData)
 	if err != nil {
+		log.Error("http plugin sink NewRequestWithContext" + err.Error())
 		return nil, err
 	}
 	req.Header.Add("Content-Type", `application/json`)
 
 	resp, err := hp.httpClient.Do(req)
 	if err != nil {
+		log.Error("http plugin sink httpClient.Do" + err.Error())
 		return nil, err
 	}
 
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Error("http plugin sink io read" + err.Error())
+
 		return nil, err
 	}
 
