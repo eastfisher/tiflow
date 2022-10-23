@@ -2,15 +2,21 @@ package rpc
 
 import (
 	"context"
-	"github.com/labstack/gommon/log"
-	"github.com/pingcap/tiflow/cdc/model"
-	"github.com/stretchr/testify/require"
+	"fmt"
 	"net/rpc/jsonrpc"
 	"net/url"
 	"testing"
 	"time"
+
+	"github.com/labstack/gommon/log"
+	"github.com/pingcap/tiflow/cdc/model"
+	"github.com/stretchr/testify/require"
 )
 
+func TestRpcPluginUriScheme(t *testing.T) {
+	sinkURI, err := url.Parse("httpplugin://asdf")
+	fmt.Println(err, sinkURI.Scheme)
+}
 func TestRPCClient(t *testing.T) {
 	rpcClient, err := jsonrpc.Dial("tcp", "localhost:5006")
 	require.NoError(t, err)

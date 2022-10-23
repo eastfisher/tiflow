@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/pingcap/failpoint"
+	"github.com/pingcap/log"
 	"github.com/pingcap/tiflow/cdc/contextutil"
 	"github.com/pingcap/tiflow/cdc/model"
 	"github.com/pingcap/tiflow/cdc/sink/http"
@@ -203,6 +204,7 @@ func New(
 	filter *filter.Filter, config *config.ReplicaConfig, opts map[string]string,
 	errCh chan error,
 ) (Sink, error) {
+	log.Info("sinkURI::" + sinkURIStr)
 	// parse sinkURI as a URI
 	sinkURI, err := url.Parse(sinkURIStr)
 	if err != nil {
