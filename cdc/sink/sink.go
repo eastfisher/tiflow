@@ -161,7 +161,7 @@ func init() {
 	}
 
 	// register http plugin sink
-	sinkIniterMap["http"] = func(
+	sinkIniterMap["http-plugin"] = func(
 		ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,
 		filter *filter.Filter, config *config.ReplicaConfig, opts map[string]string,
 		errCh chan error,
@@ -170,7 +170,7 @@ func init() {
 	}
 
 	// register rpc plugin sink
-	sinkIniterMap["rpc"] = func(
+	sinkIniterMap["rpc-plugin"] = func(
 		ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,
 		filter *filter.Filter, config *config.ReplicaConfig, opts map[string]string,
 		errCh chan error,
@@ -179,13 +179,14 @@ func init() {
 	}
 
 	// register lua plugin sink
-	sinkIniterMap["lua"] = func(
+	sinkIniterMap["lua-plugin"] = func(
 		ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,
 		filter *filter.Filter, config *config.ReplicaConfig, opts map[string]string,
 		errCh chan error,
 	) (Sink, error) {
 		return lua.NewLuaSink(ctx, sinkURI, config, opts, errCh)
 	}
+
 	failpoint.Inject("SimpleMySQLSinkTester", func() {
 		sinkIniterMap["simple-mysql"] = func(
 			ctx context.Context, changefeedID model.ChangeFeedID, sinkURI *url.URL,

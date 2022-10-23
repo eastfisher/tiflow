@@ -347,6 +347,20 @@ func TestFixSinkProtocolIncompatible(t *testing.T) {
 			},
 			expectedProtocolStr: emptyProtocolStr,
 		},
+		{
+			info: &ChangeFeedInfo{
+				AdminJobType:   AdminStop,
+				State:          StateStopped,
+				Error:          nil,
+				CreatorVersion: "5.3.0",
+				SinkURI:        "http-plugin://127.0.0.1:9092/ticdc-test2",
+				Config: &config.ReplicaConfig{
+					Sink: &config.SinkConfig{Protocol: "http-plugin"},
+				},
+			},
+			expectedProtocolStr: emptyProtocolStr,
+		},
+
 	}
 
 	for _, tc := range configTestCases {
